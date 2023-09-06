@@ -30,14 +30,16 @@ pipeline {
                 script {
                     def scannerHome = tool 'SonarScanner 4.7.0.2747'
                    withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
-                        // Run SonarCloud analysis
-                        
-                        sonar-scanner \
+                    sonar-scanner \
                             -Dsonar.organization=greyabiwon-projects \
                             -Dsonar.projectKey=greyabiwon-projects_deckmaster \
                             -Dsonar.sources=. \
                             -Dsonar.host.url=https://sonarcloud.io
-                    }
+                   }
+                        // Run SonarCloud analysis
+                        
+                        
+                    
                         timeout(time: 10, unit: 'MINUTES') {
                             waitForQualityGate abortPipeline: true
                         }
