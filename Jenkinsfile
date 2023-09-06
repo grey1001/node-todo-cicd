@@ -28,9 +28,11 @@ pipeline {
         stage('Run SonarCloud Analysis') {
             steps {
                 script {
+                    def scannerHome = tool 'SonarScanner 4.0'
                     withSonarQubeEnv(credentialsId: SONAR_TOKEN, installationName: 'sonar-server') {
                         // Run SonarCloud analysis
-                        sh 'mvn sonar:sonar'
+                        
+                        sh "${scannerHome}/bin/sonar-scanner"
                         sonar-scanner(
                             '-Dsonar.organization=greyabiwon-projects',
                             '-Dsonar.projectKey=greyabiwon-projects_deckmaster',
