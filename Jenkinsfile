@@ -21,6 +21,7 @@ pipeline {
                 sh 'sudo apt install nodejs -y'
                 sh 'sudo apt install npm -y'
                 sh 'npm install'
+                sh 'npm audit fix --force'
             }
         }
 
