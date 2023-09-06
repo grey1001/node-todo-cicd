@@ -4,7 +4,7 @@ pipeline {
     environment {
         registry = "greyabiwon/nodejsmedium"
         registryCredential = 'docker-login'
-        sonar_token = credentials('SONAR_TOKEN') // Use the actual credential ID here
+        SONAR_TOKEN = credentials('SONAR_TOKEN') // Use the actual credential ID here
         SLACK_TOKEN = 'slack-token'
     }
 
@@ -28,7 +28,7 @@ pipeline {
         stage('Run SonarCloud Analysis') {
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: sonar_token, installationName: 'sonar-server') {
+                    withSonarQubeEnv(credentialsId: SONAR_TOKEN, installationName: 'sonar-server') {
                         // Run SonarCloud analysis
                         sonar-scanner(
                             '-Dsonar.organization=greyabiwon-projects',
