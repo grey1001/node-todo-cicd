@@ -28,17 +28,16 @@ pipeline {
         stage('Run SonarCloud Analysis') {
             steps {
                 script {
-                    def scannerHome = tool 'SonarScanner 4.0'
+                    def scannerHome = tool 'SonarScanner 4.7.0.2747'
                    withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
                         // Run SonarCloud analysis
                         
-                       sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.6.0.1398:sonar'
-                        sonar-scanner(
-                            '-Dsonar.organization=greyabiwon-projects',
-                            '-Dsonar.projectKey=greyabiwon-projects_deckmaster',
-                            '-Dsonar.sources=.',
-                            '-Dsonar.host.url=https://sonarcloud.io'
-                        )
+                        sonar-scanner \
+                            -Dsonar.organization=greyabiwon-projects \
+                            -Dsonar.projectKey=greyabiwon-projects_deckmaster \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=https://sonarcloud.io
+                    }
                         timeout(time: 10, unit: 'MINUTES') {
                             waitForQualityGate abortPipeline: true
                         }
