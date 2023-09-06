@@ -28,23 +28,24 @@ pipeline {
 
         
 
-        stage('Run SonarCloud Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
-                        // Run SonarCloud analysis
-                        sonar-scanner \
-                            -Dsonar.organization=greyabiwon-projects \
-                            -Dsonar.projectKey=greyabiwon-projects_deckmaster \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=https://sonarcloud.io
-                    }
-                    timeout(time: 10, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true
-                    }
+      stage('Run SonarCloud Analysis') {
+    steps {
+        script {
+            withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
+                // Run SonarCloud analysis
+                sonar-scanner(
+                    '-Dsonar.organization=greyabiwon-projects',
+                    '-Dsonar.projectKey=greyabiwon-projects_deckmaster',
+                    '-Dsonar.sources=.',
+                    '-Dsonar.host.url=https://sonarcloud.io'
+                )
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
+    }
+}
 
         stage('Building image') {
             steps {
