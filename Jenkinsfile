@@ -44,48 +44,48 @@ pipeline {
                 }
             }
         }
+    }
 
-    //     stage('Building image') {
-    //         steps {
-    //             script {
-    //                 def dockerImageName = "${registry}:${BUILD_NUMBER}"
-    //                 dockerImage = docker.build dockerImageName
+    // stage('Building image') {
+    //     steps {
+    //         script {
+    //             def dockerImageName = "${registry}:${BUILD_NUMBER}"
+    //             dockerImage = docker.build dockerImageName
+    //         }
+    //     }
+    // }
+
+    // stage('Trivy Scan') {
+    //     steps {
+    //         script {
+    //             // Define the Docker image name and tag (replace with your actual image name and tag)
+    //             def dockerImageName = "${registry}:${BUILD_NUMBER}"
+
+    //             // Run Trivy scan on your Docker image
+    //             def trivyScanResult = sh(script: "trivy image ${dockerImageName}", returnStatus: true)
+
+    //             if (trivyScanResult == 0) {
+    //                 echo 'Trivy scan passed. No vulnerabilities found.'
+    //             } else {
+    //                 error 'Trivy scan failed. Vulnerabilities detected.'
     //             }
     //         }
     //     }
+    // }
 
-    //     stage('Trivy Scan') {
-    //         steps {
-    //             script {
-    //                 // Define the Docker image name and tag (replace with your actual image name and tag)
-    //                 def dockerImageName = "${registry}:${BUILD_NUMBER}"
-
-    //                 // Run Trivy scan on your Docker image
-    //                 def trivyScanResult = sh(script: "trivy image ${dockerImageName}", returnStatus: true)
-
-    //                 if (trivyScanResult == 0) {
-    //                     echo 'Trivy scan passed. No vulnerabilities found.'
-    //                 } else {
-    //                     error 'Trivy scan failed. Vulnerabilities detected.'
-    //                 }
+    // stage('Deploy Image') {
+    //     steps {
+    //         script {
+    //             docker.withRegistry('', registryCredential) {
+    //                 dockerImage.push("latest")
     //             }
     //         }
     //     }
+    // }
 
-    //     stage('Deploy Image') {
-    //         steps {
-    //             script {
-    //                 docker.withRegistry('', registryCredential) {
-    //                     dockerImage.push("latest")
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     stage('Remove Unused docker image') {
-    //         steps {
-    //             sh "docker rmi ${registry}:${BUILD_NUMBER}"
-    //         }
+    // stage('Remove Unused docker image') {
+    //     steps {
+    //         sh "docker rmi ${registry}:${BUILD_NUMBER}"
     //     }
     // }
 
@@ -107,5 +107,4 @@ pipeline {
             )
         }
     }
-}
 }
