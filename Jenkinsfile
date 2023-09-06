@@ -4,7 +4,7 @@ pipeline {
     environment {
         registry = "greyabiwon/nodejsmedium"
         registryCredential = 'docker-login'
-        SONAR_TOKEN = credentials('SONAR_TOKEN') // Use the actual credential ID here
+        SONAR_TOKEN = 'SONAR_TOKEN' // Use the actual credential ID here
         SLACK_TOKEN = 'slack-token'
     }
 
