@@ -1,12 +1,10 @@
 pipeline {
     agent { label 'jenkins-slave' }
 
-    
-
     environment {
         registry = "greyabiwon/nodejsmedium"
         registryCredential = 'docker-login'
-        sonar_token = 'SONAR_TOKEN'
+        sonar_token = credentials('SONAR_TOKEN') // Use the actual credential ID here
         SLACK_TOKEN = 'slack-token'
     }
 
@@ -24,33 +22,32 @@ pipeline {
                 sh 'sudo apt install npm'
                 sh 'npm install'
             }
-            
+        }
 
-        
-
-      stage('Run SonarCloud Analysis') {
-    steps {
-        script {
-            withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
-                // Run SonarCloud analysis
-                sonar-scanner(
-                    '-Dsonar.organization=greyabiwon-projects',
-                    '-Dsonar.projectKey=greyabiwon-projects_deckmaster',
-                    '-Dsonar.sources=.',
-                    '-Dsonar.host.url=https://sonarcloud.io'
-                )
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+        stage('Run SonarCloud Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv(credentialsId: sonar_token, installationName: 'sonar-server') {
+                        // Run SonarCloud analysis
+                        sonar-scanner(
+                            '-Dsonar.organization=greyabiwon-projects',
+                            '-Dsonar.projectKey=greyabiwon-projects_deckmaster',
+                            '-Dsonar.sources=.',
+                            '-Dsonar.host.url=https://sonarcloud.io'
+                        )
+                        timeout(time: 10, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: true
+                        }
+                    }
                 }
             }
         }
-    }
-}
 
         stage('Building image') {
             steps {
                 script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    def dockerImageName = "${registry}:${BUILD_NUMBER}"
+                    dockerImage = docker.build dockerImageName
                 }
             }
         }
@@ -77,8 +74,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', registryCredential) {
-                        dockerImage.push("$BUILD_NUMBER")
-                        dockerImage.push('latest')
+                        dockerImage.push("latest")
                     }
                 }
             }
@@ -86,29 +82,27 @@ pipeline {
 
         stage('Remove Unused docker image') {
             steps {
-                sh "docker rmi $registry:$BUILD_NUMBER"
-            }
-        }
-
-            }
-            post {
-                failure {
-                    slackSend(
-                        color: '#FF0000',
-                        message: "Pipeline failed: ${currentBuild.fullDisplayName}",
-                        tokenCredentialId: 'slack-token',
-                        channel: '#devops-cicd'
-                    )
-                }
-                success {
-                    slackSend(
-                        color: 'good',
-                        message: "Pipeline succeeded: ${currentBuild.fullDisplayName}",
-                        tokenCredentialId: SLACK_TOKEN,
-                        channel: '#devops-cicd'
-                    )
-                }
+                sh "docker rmi ${registry}:${BUILD_NUMBER}"
             }
         }
     }
-        // ... (other stages)
+
+    post {
+        failure {
+            slackSend(
+                color: '#FF0000',
+                message: "Pipeline failed: ${currentBuild.fullDisplayName}",
+                tokenCredentialId: 'slack-token',
+                channel: '#devops-cicd'
+            )
+        }
+        success {
+            slackSend(
+                color: 'good',
+                message: "Pipeline succeeded: ${currentBuild.fullDisplayName}",
+                tokenCredentialId: SLACK_TOKEN,
+                channel: '#devops-cicd'
+            )
+        }
+    }
+}
