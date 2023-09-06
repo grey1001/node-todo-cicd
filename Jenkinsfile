@@ -28,14 +28,18 @@ pipeline {
         stage('Run SonarCloud Analysis') {
             steps {
                 script {
+                    // Define the SonarScanner tool installation
                     def scannerHome = tool 'SonarScanner 4.7.0.2747'
-                   withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
-                        sonar-scanner 
-                   }
-                        // Run SonarCloud analysis
-                        
-                        
                     
+                    // Set environment variables for SonarQube credentials
+                    withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
+                        // Run SonarCloud analysis using the specified tool
+                        sh "${scannerHome}/bin/sonar-scanner"
+                        
+                        // Optional: You can specify additional analysis parameters here
+                        // sh "${scannerHome}/bin/sonar-scanner -Dsonar.parameter=value"
+                        
+                        // Wait for the quality gate and abort the pipeline if it fails
                         timeout(time: 10, unit: 'MINUTES') {
                             waitForQualityGate abortPipeline: true
                         }
@@ -43,7 +47,7 @@ pipeline {
                 }
             }
         }
-    }
+
 
     // stage('Building image') {
     //     steps {
@@ -105,5 +109,4 @@ pipeline {
                 channel: '#devops-cicd'
             )
         }
-    }
-}
+    
