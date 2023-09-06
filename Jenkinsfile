@@ -30,11 +30,7 @@ pipeline {
                 script {
                     def scannerHome = tool 'SonarScanner 4.7.0.2747'
                    withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
-                    sonar-scanner \
-                            -Dsonar.organization=greyabiwon-projects \
-                            -Dsonar.projectKey=greyabiwon-projects_deckmaster \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=https://sonarcloud.io
+                        sonar-scanner 
                    }
                         // Run SonarCloud analysis
                         
