@@ -17,12 +17,16 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-    def scannerHome = tool 'sonar-server';
-    withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner"
+            steps {
+                script {
+                    def scannerHome = tool 'sonar-server'
+                    withSonarQubeEnv() {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
+            }
+        }
     }
-  }
-}
 
     post {
         failure {
