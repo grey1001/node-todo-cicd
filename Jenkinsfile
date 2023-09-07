@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Define the SonarScanner tool installation
-                    def scannerHome = tool 'SonarScanner 4.7.0.2747'
+                    def scannerHome = tool 'sonar-server'
                     
                     // Set environment variables for SonarQube credentials
                     withSonarQubeEnv(credentialsId: 'SONAR_TOKEN', installationName: 'sonar-server') {
