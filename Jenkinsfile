@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'jenkins-slave' }
+    agent any
 
     environment {
         registry = "greyabiwon/nodejsmedium"
